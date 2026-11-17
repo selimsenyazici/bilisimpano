@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BilişimPano — Teknik sorunun için ücretsiz ilan aç</title>
+  <meta name="description" content="Format, donanım, ağ, kamera ve yazılım sorunları için ücretsiz ilan aç; uzmanlar WhatsApp'tan teklif versin.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0d1b3d">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:site_name" content="BilişimPano">
+  <meta property="og:title" content="BilişimPano — Teknik sorunun için ücretsiz ilan aç">
+  <meta property="og:description" content="Format, donanım, ağ, kamera ve yazılım sorunları için ücretsiz ilan aç; uzmanlar teklif bıraksın.">
+  <link rel="stylesheet" href="styles.css?v=8">
+  <script type="module" src="app.js?v=8"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./">Bilişim<span>Pano</span></a>
+    <div class="top-actions">
+      <button id="mine-btn" class="btn ghost sm" type="button" hidden>İlanlarım</button>
+      <a class="btn sm" href="#ilanlar">Uzmansan ilanlara bak</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-in">
+      <div class="pitch">
+        <h1>Bilişim sorunun mu var? İlan aç, uzmanlar WhatsApp'tan yazsın.</h1>
+        <p class="lead">Format, donanım onarımı, ağ kurulumu, kamera sistemleri, yazılım ve web desteği. Üyelik yok, ücret yok.</p>
+        <ol class="steps">
+          <li><b>1</b><span>Sorunu ve ilçeni yaz</span></li>
+          <li><b>2</b><span>Uzmanlar teklif bıraksın, özel bağlantından gör</span></li>
+          <li><b>3</b><span>İşin bitince tek tıkla ilanı kapat</span></li>
+        </ol>
+        <ul class="trust">
+          <li>24 saat yayında kalır</li>
+          <li>Telefon numaran istenmez</li>
+          <li>Kayıt gerektirmez</li>
+        </ul>
+      </div>
+
+      <section class="card-form" id="ilan" aria-labelledby="form-title">
+        <h2 id="form-title">Ücretsiz ilan aç</h2>
+        
+        <form id="listing-form" autocomplete="off" novalidate>
+          <label>Kategori
+            <select id="f-category" autocomplete="off" required></select>
+          </label>
+          <div class="row">
+            <label>İl
+              <select id="f-city" autocomplete="off" required></select>
+            </label>
+            <label>İlçe
+              <input id="f-district" type="text" maxlength="40" autocomplete="off" placeholder="Kadıköy" required>
+            </label>
+          </div>
+          <label>Sorun açıklaması
+            <textarea id="f-desc" rows="4" minlength="20" maxlength="500" required
+              placeholder="Örn: Laptop açılıyor ama ekran siyah kalıyor, fan sesi geliyor."></textarea>
+            <small>Yalnızca sorunu yaz. Telefon, adres, isim ya da bağlantı ekleme; ilan herkese açık.</small>
+            <small id="desc-count">0 / 500</small>
+          </label>
+          <input id="f-website" class="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div id="turnstile"></div>
+          <p id="form-error" class="error" role="alert" hidden></p>
+          <button class="btn block" type="submit">İlanı yayınla</button>
+        </form>
+        <div id="result" class="notice" hidden aria-live="polite">
+          <h3>İlanın yayında</h3>
+          <p>Bu bağlantıyı şimdi kaydet. Gelen teklifleri bu bağlantıdan görür, işin bitince ilanı yine buradan kapatırsın. Sayfa kapanınca tekrar gösterilmez.</p>
+          <input id="close-url" type="text" readonly>
+          <button id="copy-btn" class="btn ghost" type="button">Bağlantıyı kopyala</button>
+        </div>
+      </section>
+      <section id="close-panel" class="owner" hidden aria-live="polite">
+        <div class="owner-head">
+          <div>
+            <h2>Gelen teklifler</h2>
+            <p id="close-msg">Teklifler yalnızca sana görünür.</p>
+          </div>
+          <button id="offers-refresh" class="btn ghost sm" type="button">Yenile</button>
+        </div>
+        <div id="offers" class="offers"></div>
+        <div class="owner-foot">
+          <button id="close-btn" class="btn" type="button">İşim bitti, ilanı kaldır</button>
+          <a class="btn ghost" href="./">Ana sayfaya dön</a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <main class="board" id="ilanlar">
+    <div class="board-head">
+      <h2 id="list-title">Açık ilanlar</h2>
+      <div class="filters" role="search">
+        <select id="q-category" autocomplete="off" aria-label="Kategori filtresi"></select>
+        <select id="q-city" autocomplete="off" aria-label="İl filtresi"></select>
+        <input id="q-district" type="search" autocomplete="off" placeholder="İlçe ara" maxlength="40" aria-label="İlçe ara">
+      </div>
+    </div>
+    <div id="chips" class="chips" role="group" aria-label="Kategoriye göre filtrele"></div>
+    <div id="list" class="list" aria-live="polite"></div>
+    <div id="empty" class="empty" hidden>
+      <p id="empty-msg">Bu filtrede açık ilan yok. Filtreyi genişlet ya da ilk ilanı sen aç.</p>
+      <a class="btn" href="#ilan">İlan aç</a>
+    </div>
+  </main>
+
+  <section class="info" aria-label="Kimler için">
+    <article>
+      <h3>Sorunu olanlar için</h3>
+      <ul>
+        <li>İlan açmak ücretsiz, kayıt gerekmez</li>
+        <li>Telefon numaran hiç istenmez ve saklanmaz</li>
+        <li>Teklifleri özel bağlantından görür, beğendiğine WhatsApp'tan yazarsın</li>
+      </ul>
+      <a class="btn" href="#ilan">İlan aç</a>
+    </article>
+    <article>
+      <h3>Uzmanlar için</h3>
+      <ul>
+        <li>Üyelik, kota ve komisyon yok</li>
+        <li>İlana adını, numaranı ve fiyat notunu bırakırsın; teklifin yalnızca ilan sahibine gider</li>
+        <li>Yalnızca bilişim ve teknik servis ilanları listelenir</li>
+      </ul>
+      <a class="btn ghost" href="#ilanlar">İlanlara bak</a>
+    </article>
+  </section>
+
+  <dialog id="mine-dialog" aria-labelledby="mine-title">
+    <h3 id="mine-title">İlanlarım</h3>
+    <p class="muted-text">Bu tarayıcıdan açtığın ilanlar. Birine tıklayıp teklifleri görebilirsin.</p>
+    <div id="mine-list"></div>
+    <button class="btn ghost" type="button" id="mine-close">Kapat</button>
+  </dialog>
+
+  <dialog id="offer-dialog" aria-labelledby="offer-title">
+    <form id="offer-form" autocomplete="off" novalidate>
+      <h3 id="offer-title">Teklif bırak</h3>
+      <p class="muted-text" id="offer-for"></p>
+      <label>Adın ya da firman
+        <input id="o-name" type="text" maxlength="40" required>
+      </label>
+      <label>WhatsApp numaran
+        <input id="o-phone" type="tel" inputmode="tel" placeholder="05xx xxx xx xx" required>
+        <small>Numaran yalnızca ilan sahibine gösterilir, herkese açık listede görünmez. Göndererek <a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a>'nı kabul edersin.</small>
+      </label>
+      <label>Not ya da tahmini fiyat
+        <textarea id="o-note" rows="3" maxlength="200" placeholder="Örn: Yarın gelebilirim, 500 TL"></textarea>
+      </label>
+      <div id="o-turnstile"></div>
+      <p id="offer-error" class="error" role="alert" hidden></p>
+      <div class="dlg-actions">
+        <button class="btn" type="submit">Teklifi gönder</button>
+        <button class="btn ghost" type="button" id="offer-cancel">Vazgeç</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="foot">
+    <a class="brand" href="./">Bilişim<span>Pano</span></a>
+    <p>Platform yalnızca bir ilan panosudur; taraflar arasındaki anlaşmadan sorumlu değildir.</p>
+    <p><a href="gizlilik.html">Gizlilik ve Veri Politikası</a> · <a href="gizlilik.html#sikayet">İçerik şikâyeti</a></p>
+  </footer>
+</body>
+</html>
