@@ -252,15 +252,30 @@ function readMine() {
   try {
     const now = Date.now();
     return JSON.parse(localStorage.getItem(MINE_KEY) || '[]')
-      .filter((x) => UUID_RE.test(x.id) && UUID_RE.test(x.token) && now - x.t < 48 * 3600e3);
+      .filter((x) => UUID_RE.test(x.id) && UUID_RE.test(x.token) && now - x.t < 24 * 3600e3);
   } catch { return []; }
 }
 function writeMine(list) { try { localStorage.setItem(MINE_KEY, JSON.stringify(list.slice(0, 10))); } catch { /* yoksay */ } }
 function renderMine() {
   const a = readMine(), b = $('#mine-btn');
-  b.hidden = a.length === 0; b.textContent = `İlanlarım (${a.length})`;
+  b.hidden = a.length === 0;
 }
-$('#mine-btn').addEventListener('click', () => {
+// Kapanmış, süresi dolmuş ya da geçersiz ilanları listeden çıkar (ağ hatasında silme)
+async function pruneMine() {
+  const list = readMine();
+  if (!list.length) return;
+  const keep = [];
+  for (const x of list) {
+    try {
+      const s = await api('rpc/get_listing_status', { method: 'POST', body: { p_id: x.id, p_token: x.token } });
+      if (s === 'active') keep.push(x);
+    } catch { keep.push(x); }
+  }
+  writeMine(keep); renderMine();
+}
+$('#mine-btn').addEventListener('click', async () => {
+  await pruneMine();
+  if (!readMine().length) return;
   const box = $('#mine-list'); box.replaceChildren();
   for (const x of readMine()) {
     const b = document.createElement('button');
@@ -386,4 +401,5 @@ const ago = (iso) => {
 })();
 
 renderMine();
+pruneMine();
 loadListings();
