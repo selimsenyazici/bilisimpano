@@ -108,3 +108,4 @@ dialog::backdrop{background:rgba(7,13,29,.65)}
 .legal h2{font-size:1.15rem;margin:1.8rem 0 .5rem}
 .legal ul{padding-left:1.2rem;display:grid;gap:.4rem}
 .legal code{font:600 .9em ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);padding:0 .3rem;border-radius:4px}
+.hero h1{text-wrap:balance}
